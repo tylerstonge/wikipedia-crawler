@@ -16,11 +16,13 @@ import java.util.regex.Matcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Queue;
 import java.util.LinkedList;
 
 public class PageReader {
-    public static final int NUMBER_TO_READ = 5;
+    public static final int NUMBER_TO_READ = 50;
 
     public static Page getPage(String url) {
         Page p = null;
@@ -60,22 +62,27 @@ public class PageReader {
         return p;
     }
 
-    public static HashMap<String, Page> getPages(String s) {
+    public static void getPages(String s) {
         Queue<String> urls = new LinkedList<String>();
-        HashMap<String, Page> pages = new HashMap<String, Page>();
         urls.add("https://wikipedia.org/wiki/" + s);
-        
-        while (pages.size() < 500) {
+
+        int count = 0;
+        while (count < 600) {
             Page page = getPage(urls.remove());
-            if (page ==  null) continue;
-            pages.put(page.name, page);
+            Vertex v1 = new Vertex(page.name, page);
+            App.g.addVertex(v1);
             for (String link : page.getLinks()) {
                 urls.add(link);
+                Page l = getPage(link);
+                if (l == null) continue;
+                Vertex v2 = new Vertex(l.name, l);
+                App.g.addVertex(v2);
+                App.g.addEdge(v1, v2, 1 - page.similarity(l));
+                count++;
             }
         }
-        return pages;
     }
-    
+
     public static Page read(File f) {
         Page p = null;
         try {
@@ -87,15 +94,15 @@ public class PageReader {
         }
         return p;
     }
-    
+
     public static void write(Page p) {
         FileOutputStream fout = null;
         ObjectOutputStream oos = null;
-        
+
         try {
             File f = new File("cache/" + p.name);
             f.createNewFile();
-            
+
             fout = new FileOutputStream(f, false);
             oos = new ObjectOutputStream(fout);
             oos.writeObject(p);
@@ -109,7 +116,7 @@ public class PageReader {
                     e.printStackTrace();
                 }
             }
-            
+
             if (oos != null) {
                 try {
                     oos.close();

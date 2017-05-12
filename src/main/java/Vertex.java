@@ -4,20 +4,40 @@ public class Vertex {
     public String name;
     public Page page;
     public ArrayList<Edge> edges;
-    
+
     public Vertex(String name, Page page) {
         this.name = name;
         this.page = page;
         this.edges = new ArrayList<Edge>();
-        for (String link : page.links) {
-            System.out.println("Adding " + link);
-            Page p2 = PageReader.getPage(link);
-            if (p2 == null) continue;
-            edges.add(new Edge(page, p2, page.similarity(p2)));
-        }
     }
-    
+
+    public void addEdge(Edge e) {
+        if (edges.contains(e))
+            return;
+        edges.add(e);
+    }
+
+    public boolean containsEdge(Edge e) {
+        return edges.contains(e);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
     public ArrayList<Edge> getEdges() {
         return this.edges;
+    }
+
+    public int hashCode() {
+        return this.name.hashCode();
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof Vertex))
+            return false;
+
+        Vertex v = (Vertex) other;
+        return this.name.equals(v.name);
     }
 }
