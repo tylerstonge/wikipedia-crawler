@@ -1,15 +1,18 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.Serializable;
 
-public class Page {
+public class Page implements Serializable {
 
     public String url;
+    public String name;
     public ArrayList<String> links;
     public HashMap<String, Integer> frequencies;
 
-    public Page(String url, String text, ArrayList<String> links) {
+    public Page(String url, String name, String text, ArrayList<String> links) {
         this.url = url;
+        this.name = name;
         this.links = links;
 
         // Get frequencies

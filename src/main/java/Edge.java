@@ -10,6 +10,6 @@ public class Edge {
     }
 
     public String toString() {
-        return start.url + " -> " + end.url + " : " + weight;
+        return start.name + " -> " + end.name + " : " + weight;
     }
 }
