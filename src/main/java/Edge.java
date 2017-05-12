@@ -24,6 +24,14 @@ public class Edge implements Comparable<Edge> {
             return 1;
         return 0;
     }
+    
+    public Vertex getStart() {
+        return this.start;
+    }
+    
+    public Vertex getEnd() {
+        return this.end;
+    }
 
     public Vertex getOther(Vertex v) {
         return (v == start) ? end : start;

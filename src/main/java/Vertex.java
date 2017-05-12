@@ -32,6 +32,10 @@ public class Vertex {
     public int hashCode() {
         return this.name.hashCode();
     }
+    
+    public Page getPage() {
+        return this.page;
+    }
 
     public boolean equals(Object other) {
         if (!(other instanceof Vertex))

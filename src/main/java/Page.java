@@ -46,6 +46,10 @@ public class Page implements Serializable {
 
         return dotProd / Math.sqrt(magA * magB);
     }
+    
+    public String getName() {
+        return this.name;
+    }
 
     public ArrayList<String> getLinks() {
         return this.links;

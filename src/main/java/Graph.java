@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jgrapht.alg.util.UnionFind;
+// import org.jgrapht.alg.util.UnionFind;
 
 public class Graph {
 
@@ -46,7 +46,6 @@ public class Graph {
         // Add weights to starting points neighbors
         for (Edge e : src.getEdges()) {
             Vertex other = e.getOther(src);
-            System.out.println(">>" + other.name);
             prev.put(other.getName(), src.getName());
             dist.put(other.getName(), e.weight);
             pq.add(other);
@@ -79,9 +78,6 @@ public class Graph {
         // Find path
         LinkedList<Vertex> path = new LinkedList<Vertex>();
         path.add(dest);
-
-        for (Map.Entry<String, String> entry : prev.entrySet())
-            System.out.println(entry.getKey() + " <- " + entry.getValue());
 
         String currentName = dest.name;
         while (!currentName.equals(src.name)) {
@@ -157,25 +153,45 @@ public class Graph {
     }
 
     public boolean addEdge(Vertex start, Vertex end, double weight){
-        if(start.equals(end)){
+        if (this.vertices.containsKey(start.getName()))
+            start = getVertex(start.getName());
+        if (this.vertices.containsKey(end.getName()))
+            end = getVertex(end.getName());
+
+        if(start.equals(end)) {
             return false;
         }
 
         Edge e = new Edge(start, end, weight);
-        if(edges.containsKey(e.hashCode())){
+        if(edges.containsKey(e.hashCode())) {
             return false;
         }
 
         //and that the Edge isn't already incident to start of the vertices
-        else if(start.containsEdge(e) || end.containsEdge(e)){
+        else if(start.containsEdge(e) || end.containsEdge(e)) {
             return false;
         }
 
         edges.put(e.hashCode(), e);
         start.addEdge(e);
-        vertices.put(start.getName(), start);
+        addVertex(start);
         end.addEdge(e);
+        addVertex(end);
         return true;
+    }
+    
+    public Page mostSimilar(String name) {
+        Vertex v1 = getVertex(name);
+        Page mostSimilar = null;
+        double minWeight = Double.MAX_VALUE;
+        for (Map.Entry<String, Vertex> entry : vertices.entrySet()) {
+            if (!v1.getName().equals(entry.getValue().getName())) {
+                if (v1.getPage().similarity(entry.getValue().getPage()) < minWeight) {
+                    mostSimilar = entry.getValue().getPage();
+                }
+            }
+        }
+        return mostSimilar;
     }
 
 }

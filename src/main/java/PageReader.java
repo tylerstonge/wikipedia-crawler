@@ -22,7 +22,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 public class PageReader {
-    public static final int NUMBER_TO_READ = 50;
+    public static final int NUMBER_TO_READ = 5;
 
     public static Page getPage(String url) {
         Page p = null;
@@ -69,15 +69,16 @@ public class PageReader {
         int count = 0;
         while (count < 600) {
             Page page = getPage(urls.remove());
-            Vertex v1 = new Vertex(page.name, page);
+            Vertex v1 = App.g.getVertex(page.getName()) == null ? new Vertex(page.getName(), page) : App.g.getVertex(page.getName());
             App.g.addVertex(v1);
             for (String link : page.getLinks()) {
-                urls.add(link);
                 Page l = getPage(link);
                 if (l == null) continue;
-                Vertex v2 = new Vertex(l.name, l);
+                urls.add(link);
+                Vertex v2 = App.g.getVertex(l.getName()) == null ? new Vertex(l.getName(), l) : App.g.getVertex(l.getName());
                 App.g.addVertex(v2);
-                App.g.addEdge(v1, v2, 1 - page.similarity(l));
+                Edge e1 = new Edge(v1, v2, 1 - page.similarity(l));
+                App.g.addEdge(e1.getStart(), e1.getEnd(), e1.getWeight());
                 count++;
             }
         }
